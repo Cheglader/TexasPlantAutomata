@@ -41,7 +41,7 @@ namespace PlantGrowth
 	
 	class Plant
     {
-		public float x, y, width_radius, height;
+		private float x, y, width_radius, height;
 		public int state;
 		
 		public Plant(x, y, state)
@@ -53,17 +53,45 @@ namespace PlantGrowth
 			this.height = 0;
 		}
 		
-		//show outputs here
-		public void color_rep() {
-			
+		//getters
+		
+		//may vary per plant type
+		public int get_color_rep(int month) {
+			switch(month) 
+			{
+				case month_enum.JAN:
+					return color_rep_enum.WINTER;
+				case month_enum.FEB:
+					return color_rep_enum.WINTER;
+				case month_enum.MAR:
+					return color_rep_enum.WINTER;
+				case month_enum.APR:
+					return color_rep_enum.GREEN;
+				case month_enum.MAY:
+					return color_rep_enum.FLOWER;
+				case month_enum.JUN:
+					return color_rep_enum.FLOWER;
+				case month_enum.JUL:
+					return color_rep_enum.FLOWER;
+				case month_enum.AUG:
+					return color_rep_enum.FLOWER;
+				case month_enum.SEP:
+					return color_rep_enum.GREEN;
+				case month_enum.OCT:
+					return color_rep_enum.GREEN;
+				case month_enum.NOV:
+					return color_rep_enum.WINTER;
+				case month_enum.DEC:
+					return color_rep_enum.WINTER;
+			}
 		}
 		
-		public void height() {
-			
+		public float get_height() {
+			return this.height;
 		}
 		
-		public void width_radius() {
-			
+		public float get_width_radius() {
+			return this.width_radius;
 		}
 		
     }
@@ -86,6 +114,23 @@ namespace PlantGrowth
 	{
 		public Yucca(x, y, state) : base(x, y, state)
 		{
+		}
+	}
+	
+	class GrowthSimulation
+	{
+		private int month;
+		
+		static void Main(string[] args) 
+        {
+			List<Plant> plants = new List<Plant>();
+			plants.add(new BearGrass());
+			plants.add(new LittleBluestem());
+			plants.add(new Yucca());
+        }
+		
+		public static void get_month() {
+			return month;
 		}
 	}
 
