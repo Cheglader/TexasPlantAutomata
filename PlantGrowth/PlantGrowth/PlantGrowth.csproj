@@ -33,9 +33,6 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="SharpQuadTrees">
-      <HintPath>..\..\..\..\..\Downloads\SharpQuadTrees-master\SharpQuadTrees-master\SharpQuadTrees\bin\Debug\SharpQuadTrees.dll</HintPath>
-    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Xml.Linq" />
@@ -51,6 +48,12 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\..\..\Downloads\SharpQuadTrees-master\SharpQuadTrees-master\SharpQuadTrees\SharpQuadTrees.csproj">
+      <Project>{4ea465e5-eb2d-4177-bd37-4097e591e94f}</Project>
+      <Name>SharpQuadTrees</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

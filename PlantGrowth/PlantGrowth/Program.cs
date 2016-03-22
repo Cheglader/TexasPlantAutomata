@@ -21,7 +21,7 @@ namespace PlantGrowth
         NOV,
         DEC
     }
-    enum plant_enum
+    enum state_enum
     {
         ALIVE,
         SEED,
@@ -39,10 +39,18 @@ namespace PlantGrowth
         PARTIAL,
         FULL
     }
+    enum plant_enum
+    {
+        BEAR,
+        YUCCA,
+        BLUESTEM
+    }
     class Plant
     {
-        private float x, y, width_radius, height;
+        protected float x, y, width_radius, height;
         public int state;
+        protected const float min_radius = 99999;
+        protected const sun_enum sun_requirements = sun_enum.FULL;
 
         public Plant(float x, float y, int state)
         {
@@ -121,13 +129,24 @@ namespace PlantGrowth
     class GrowthSimulation
     {
         private static int month;
-
-        static void Main(string[] args)
+        private static List<Plant> simulation_plants; // TODO change to quad tree
+        static void MainFunction(List<float> xpositions, List<float> ypositions, List<int> plant_states, List<int> plant_type, int iterations, List<float> plant_heights, List<float> plant_radius, List<float> plant_output_state)
         {
-            List<Plant> plants = new List<Plant>();
-            plants.Add(new BearGrass());
-            plants.Add(new LittleBluestem());
-            plants.Add(new Yucca());
+            for(int i=0; i<xpositions.Count; ++i)
+            {
+                switch (plant_type[i])
+                {
+                    case (int)plant_enum.BEAR:
+                        simulation_plants.Add(new BearGrass(xpositions[i], ypositions[i], plant_states[i]));
+                        break;
+                    case (int)plant_enum.YUCCA:
+                        simulation_plants.Add(new Yucca(xpositions[i], ypositions[i], plant_states[i]));
+                        break;
+                    default:
+                        simulation_plants.Add(new LittleBluestem(xpositions[i], ypositions[i], plant_states[i]));
+                        break;
+                }
+            }
         }
 
         public static int get_month()
