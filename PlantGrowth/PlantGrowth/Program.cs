@@ -125,11 +125,22 @@ namespace PlantGrowth
         {
         }
     }
-
+    class Changes
+    {
+        private Plant changer;
+        private float new_height;
+        private float new_radius;
+        private Plant new_state;
+        public void ApplyChanges()
+        {
+            changer.NewDimensions(new_height, new_radius, new_state);
+        }
+    }
     class GrowthSimulation
     {
         private static int month;
         private static List<Plant> simulation_plants; // TODO change to quad tree
+        private static Queue<Changes> change_object;
         static void MainFunction(List<float> xpositions, List<float> ypositions, List<int> plant_states, List<int> plant_type, int iterations, List<float> plant_heights, List<float> plant_radius, List<float> plant_output_state)
         {
             for(int i=0; i<xpositions.Count; ++i)
@@ -146,6 +157,28 @@ namespace PlantGrowth
                         simulation_plants.Add(new LittleBluestem(xpositions[i], ypositions[i], plant_states[i]));
                         break;
                 }
+            }
+            for(i=0; i<iterations; ++i)
+            {
+                GenerateChanges();
+                ApplyChanges();
+            }
+        }
+
+        private static void GenerateChanges()
+        {
+            foreach (var plant in simulation_plants)
+            {
+                changes_queue.Enqueue(plant.simulate(simulation_plants));
+            }
+        }
+
+        private static void ApplyChanges()
+        {
+            while(changes_queue)
+            {
+                var head = changes_queue.Pop();
+                head.ApplyChanges();
             }
         }
 
