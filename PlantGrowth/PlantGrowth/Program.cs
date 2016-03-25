@@ -95,6 +95,10 @@ namespace PlantGrowth
             }
             return color_rep_enum.WINTER;
         }
+
+
+        }
+
         public float get_height()
         {
             return this.height;
@@ -104,7 +108,26 @@ namespace PlantGrowth
         {
             return this.width_radius;
         }
+
+        public void NewDimensions(float new_height, float new_radius, state_enum new_state) 
+        {
+            this.height = new_height;
+            this.width_radius = new_radius;
+            this.state = new_state;
+        }
+
+        public float GetSunScaler(List<Plant> neighbors)
+        {
+            foreach (var neighbor in neighors)
+            {
+                if(neighbor != self && Distance(neighbor, self) < neighbor.MaxShadowDistance)
+                {
+                    // TODO distance formula, MaxShadowDistance pseudo-constant
+                }
+            }
+        }
     }
+
     class BearGrass : Plant
     {
         public BearGrass(float x, float y, int state) : base(x, y, state)
@@ -130,7 +153,7 @@ namespace PlantGrowth
         private Plant changer;
         private float new_height;
         private float new_radius;
-        private Plant new_state;
+        private state_enum new_state;
         public void ApplyChanges()
         {
             changer.NewDimensions(new_height, new_radius, new_state);
