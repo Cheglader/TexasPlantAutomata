@@ -52,19 +52,67 @@ namespace PlantGrowth
         protected const float min_radius = 99999;
         protected const sun_enum sun_requirements = sun_enum.FULL;
 
-        public Plant(float x, float y, int state)
+        public Plant(float x, float y, int state, plant_enum type)
         {
             this.x = x;
             this.y = y;
             this.state = state;
             this.width_radius = 0;
             this.height = 0;
+			this.plant_type = type;
         }
 
         //getters
 
         //may vary per plant type
-        public color_rep_enum get_color_rep(month_enum month)
+        public abstract color_rep_enum get_color_rep(month_enum month){}
+
+        public float get_height()
+        {
+            return this.height;
+        }
+
+        public float get_width_radius()
+        {
+            return this.width_radius;
+        }
+
+        public void NewDimensions(float new_height, float new_radius, state_enum new_state) 
+        {
+            this.height = new_height;
+            this.width_radius = new_radius;
+            this.state = new_state;
+        }
+
+        public float GetSunScaler(List<Plant> neighbors)
+        {
+            foreach (var neighbor in neighors)
+            {
+                if(neighbor != self && Distance(neighbor, self) < neighbor.MaxShadowDistance)
+                {
+                    // TODO distance formula, MaxShadowDistance pseudo-constant
+                }
+            }
+        }
+		
+		public Changes simulate(List<Plant> simulation_plants) 
+		{
+			Changes changes = new Changes(this);
+			//change values of new_height, new_radius, new_state
+			
+			
+			return changes;
+		}
+    }
+
+    class BearGrass : Plant
+    {
+        public BearGrass(float x, float y, int state) : base(x, y, state)
+        {
+        }
+		
+		//need to fix actual color enums
+		public color_rep_enum get_color_rep(month_enum month)
         {
             switch (month)
             {
@@ -95,50 +143,45 @@ namespace PlantGrowth
             }
             return color_rep_enum.WINTER;
         }
-
-
-        }
-
-        public float get_height()
-        {
-            return this.height;
-        }
-
-        public float get_width_radius()
-        {
-            return this.width_radius;
-        }
-
-        public void NewDimensions(float new_height, float new_radius, state_enum new_state) 
-        {
-            this.height = new_height;
-            this.width_radius = new_radius;
-            this.state = new_state;
-        }
-
-        public float GetSunScaler(List<Plant> neighbors)
-        {
-            foreach (var neighbor in neighors)
-            {
-                if(neighbor != self && Distance(neighbor, self) < neighbor.MaxShadowDistance)
-                {
-                    // TODO distance formula, MaxShadowDistance pseudo-constant
-                }
-            }
-        }
-    }
-
-    class BearGrass : Plant
-    {
-        public BearGrass(float x, float y, int state) : base(x, y, state)
-        {
-        }
     }
 
     class LittleBluestem : Plant
     {
         public LittleBluestem(float x, float y, int state) : base(x, y, state)
         {
+        }
+		
+		//need to fix actual color enums
+		public color_rep_enum get_color_rep(month_enum month)
+        {
+            switch (month)
+            {
+                case month_enum.JAN:
+                    return color_rep_enum.WINTER;
+                case month_enum.FEB:
+                    return color_rep_enum.WINTER;
+                case month_enum.MAR:
+                    return color_rep_enum.WINTER;
+                case month_enum.APR:
+                    return color_rep_enum.GREEN;
+                case month_enum.MAY:
+                    return color_rep_enum.FLOWER;
+                case month_enum.JUN:
+                    return color_rep_enum.FLOWER;
+                case month_enum.JUL:
+                    return color_rep_enum.FLOWER;
+                case month_enum.AUG:
+                    return color_rep_enum.FLOWER;
+                case month_enum.SEP:
+                    return color_rep_enum.GREEN;
+                case month_enum.OCT:
+                    return color_rep_enum.GREEN;
+                case month_enum.NOV:
+                    return color_rep_enum.WINTER;
+                case month_enum.DEC:
+                    return color_rep_enum.WINTER;
+            }
+            return color_rep_enum.WINTER;
         }
     }
 
@@ -147,6 +190,39 @@ namespace PlantGrowth
         public Yucca(float x, float y, int state) : base(x, y, state)
         {
         }
+		
+		//need to fix actual color enums
+		public color_rep_enum get_color_rep(month_enum month)
+        {
+            switch (month)
+            {
+                case month_enum.JAN:
+                    return color_rep_enum.WINTER;
+                case month_enum.FEB:
+                    return color_rep_enum.WINTER;
+                case month_enum.MAR:
+                    return color_rep_enum.WINTER;
+                case month_enum.APR:
+                    return color_rep_enum.GREEN;
+                case month_enum.MAY:
+                    return color_rep_enum.FLOWER;
+                case month_enum.JUN:
+                    return color_rep_enum.FLOWER;
+                case month_enum.JUL:
+                    return color_rep_enum.FLOWER;
+                case month_enum.AUG:
+                    return color_rep_enum.FLOWER;
+                case month_enum.SEP:
+                    return color_rep_enum.GREEN;
+                case month_enum.OCT:
+                    return color_rep_enum.GREEN;
+                case month_enum.NOV:
+                    return color_rep_enum.WINTER;
+                case month_enum.DEC:
+                    return color_rep_enum.WINTER;
+            }
+            return color_rep_enum.WINTER;
+        }
     }
     class Changes
     {
@@ -154,6 +230,11 @@ namespace PlantGrowth
         private float new_height;
         private float new_radius;
         private state_enum new_state;
+		
+		public Changes(Plant plant) 
+		{
+			changer = plant;
+		}
         public void ApplyChanges()
         {
             changer.NewDimensions(new_height, new_radius, new_state);
@@ -163,7 +244,7 @@ namespace PlantGrowth
     {
         private static int month;
         private static List<Plant> simulation_plants; // TODO change to quad tree
-        private static Queue<Changes> change_object;
+        private static Queue<Changes> changes_queue;
         static void MainFunction(List<float> xpositions, List<float> ypositions, List<int> plant_states, List<int> plant_type, int iterations, List<float> plant_heights, List<float> plant_radius, List<float> plant_output_state)
         {
             for(int i=0; i<xpositions.Count; ++i)
@@ -181,11 +262,16 @@ namespace PlantGrowth
                         break;
                 }
             }
-            for(i=0; i<iterations; ++i)
+			
+			//maybe this loop should go in grasshopper script, so C# script is run multiple times giving new output every time?
+            for(int i=0; i<iterations; ++i)
             {
                 GenerateChanges();
                 ApplyChanges();
             }
+			
+			//modify variable plant_output_state
+			
         }
 
         private static void GenerateChanges()
