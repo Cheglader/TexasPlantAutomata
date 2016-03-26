@@ -87,7 +87,7 @@ namespace PlantGrowth
         {
             foreach (var neighbor in neighbors)
             {
-                if(neighbor != self && Distance(neighbor, self) < neighbor.MaxShadowDistance)
+                if(neighbor != this && Distance(neighbor, self) < neighbor.MaxShadowDistance)
                 {
                     // TODO distance formula, MaxShadowDistance pseudo-constant
                 }
