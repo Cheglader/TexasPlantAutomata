@@ -45,27 +45,26 @@ namespace PlantGrowth
         YUCCA,
         BLUESTEM
     }
-    class Plant
+    abstract class Plant
     {
         protected float x, y, width_radius, height;
-        public int state;
+        public state_enum state;
         protected const float min_radius = 99999;
         protected const sun_enum sun_requirements = sun_enum.FULL;
 
-        public Plant(float x, float y, int state, plant_enum type)
+        public Plant(float x, float y, int state)
         {
             this.x = x;
             this.y = y;
-            this.state = state;
+            this.state = (state_enum)state;
             this.width_radius = 0;
             this.height = 0;
-			this.plant_type = type;
         }
 
         //getters
 
         //may vary per plant type
-        public abstract color_rep_enum get_color_rep(month_enum month){}
+        public abstract color_rep_enum get_color_rep(month_enum month);
 
         public float get_height()
         {
@@ -284,9 +283,9 @@ namespace PlantGrowth
 
         private static void ApplyChanges()
         {
-            while(changes_queue)
+            while(changes_queue.Any())
             {
-                var head = changes_queue.Pop();
+                var head = changes_queue.Dequeue();
                 head.ApplyChanges();
             }
         }
