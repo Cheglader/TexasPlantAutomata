@@ -75,6 +75,11 @@ namespace PlantGrowth
         {
             return this.width_radius;
         }
+		
+		public state_enum get_state() 
+		{
+			return this.state;
+		}
 
         public void NewDimensions(float new_height, float new_radius, state_enum new_state) 
         {
@@ -231,19 +236,26 @@ namespace PlantGrowth
 		{
 			changer = plant;
 		}
-        public void ApplyChanges()
+        public void ApplyChanges(List<List<float>> plant_output_state)
         {
             changer.NewDimensions(new_height, new_radius, new_state);
+			plant_output_state.Add(new List<float>(changer.get_height(), changer.get_width_radius(), changer.get_state(), changer.get_color_rep()));
         }
     }
     class GrowthSimulation
     {
-        private static int month;
+        private static month_enum month;
         private static List<Plant> simulation_plants; // TODO change to quad tree
         private static Queue<Changes> changes_queue;
-        static void MainFunction(List<float> xpositions, List<float> ypositions, List<int> plant_states, List<int> plant_type, int iterations, List<float> plant_heights, List<float> plant_radius, List<float> plant_output_state)
+        static void MainFunction(List<float> xpositions, List<float> ypositions, List<int> plant_states, List<int> plant_type, int iterations, List<float> plant_heights, List<float> plant_radius, List<List<float>> plant_output_state)
         {
-            for(int i=0; i<xpositions.Count; ++i)
+            simulation_plants = new List<Plant>();
+			changes_queue = new Queue<Changes>();
+			
+			//temporarily being set to something, but will likely be dependent on iteration number
+			month = month_enum.JAN;
+			
+			for(int i=0; i<xpositions.Count; ++i)
             {
                 switch (plant_type[i])
                 {
@@ -260,13 +272,14 @@ namespace PlantGrowth
             }
 			
 			//maybe this loop should go in grasshopper script, so C# script is run multiple times giving new output every time?
+			//otherwise, I think only the last output values will be shown on grasshopper
             for(int i=0; i<iterations; ++i)
             {
                 GenerateChanges();
-                ApplyChanges();
+				//modify plant_output_state variable
+                ApplyChanges(plant_output_state);
             }
 			
-			//modify variable plant_output_state
 			
         }
 
@@ -278,12 +291,12 @@ namespace PlantGrowth
             }
         }
 
-        private static void ApplyChanges()
+        private static void ApplyChanges(List<List<float>> plant_output_state)
         {
             while(changes_queue.Any())
             {
                 var head = changes_queue.Dequeue();
-                head.ApplyChanges();
+                head.ApplyChanges(plant_output_state);
             }
         }
 
