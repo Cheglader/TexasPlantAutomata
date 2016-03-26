@@ -85,7 +85,7 @@ namespace PlantGrowth
 
         public float GetSunScaler(List<Plant> neighbors)
         {
-            foreach (var neighbor in neighors)
+            foreach (var neighbor in neighbors)
             {
                 if(neighbor != self && Distance(neighbor, self) < neighbor.MaxShadowDistance)
                 {
@@ -110,7 +110,6 @@ namespace PlantGrowth
         {
         }
 		
-		//need to fix actual color enums
 		public color_rep_enum get_color_rep(month_enum month)
         {
             switch (month)
@@ -120,9 +119,9 @@ namespace PlantGrowth
                 case month_enum.FEB:
                     return color_rep_enum.WINTER;
                 case month_enum.MAR:
-                    return color_rep_enum.WINTER;
+                    return color_rep_enum.FLOWER;
                 case month_enum.APR:
-                    return color_rep_enum.GREEN;
+                    return color_rep_enum.FLOWER;
                 case month_enum.MAY:
                     return color_rep_enum.FLOWER;
                 case month_enum.JUN:
@@ -130,7 +129,7 @@ namespace PlantGrowth
                 case month_enum.JUL:
                     return color_rep_enum.FLOWER;
                 case month_enum.AUG:
-                    return color_rep_enum.FLOWER;
+                    return color_rep_enum.GREEN;
                 case month_enum.SEP:
                     return color_rep_enum.GREEN;
                 case month_enum.OCT:
@@ -150,7 +149,6 @@ namespace PlantGrowth
         {
         }
 		
-		//need to fix actual color enums
 		public color_rep_enum get_color_rep(month_enum month)
         {
             switch (month)
@@ -164,7 +162,7 @@ namespace PlantGrowth
                 case month_enum.APR:
                     return color_rep_enum.GREEN;
                 case month_enum.MAY:
-                    return color_rep_enum.FLOWER;
+                    return color_rep_enum.GREEN;
                 case month_enum.JUN:
                     return color_rep_enum.FLOWER;
                 case month_enum.JUL:
@@ -172,13 +170,13 @@ namespace PlantGrowth
                 case month_enum.AUG:
                     return color_rep_enum.FLOWER;
                 case month_enum.SEP:
-                    return color_rep_enum.GREEN;
+                    return color_rep_enum.FLOWER;
                 case month_enum.OCT:
-                    return color_rep_enum.GREEN;
+                    return color_rep_enum.FLOWER;
                 case month_enum.NOV:
-                    return color_rep_enum.WINTER;
+                    return color_rep_enum.FLOWER;
                 case month_enum.DEC:
-                    return color_rep_enum.WINTER;
+                    return color_rep_enum.FLOWER;
             }
             return color_rep_enum.WINTER;
         }
@@ -190,7 +188,6 @@ namespace PlantGrowth
         {
         }
 		
-		//need to fix actual color enums
 		public color_rep_enum get_color_rep(month_enum month)
         {
             switch (month)
@@ -200,9 +197,9 @@ namespace PlantGrowth
                 case month_enum.FEB:
                     return color_rep_enum.WINTER;
                 case month_enum.MAR:
-                    return color_rep_enum.WINTER;
+                    return color_rep_enum.FLOWER;
                 case month_enum.APR:
-                    return color_rep_enum.GREEN;
+                    return color_rep_enum.FLOWER;
                 case month_enum.MAY:
                     return color_rep_enum.FLOWER;
                 case month_enum.JUN:
@@ -210,7 +207,7 @@ namespace PlantGrowth
                 case month_enum.JUL:
                     return color_rep_enum.FLOWER;
                 case month_enum.AUG:
-                    return color_rep_enum.FLOWER;
+                    return color_rep_enum.GREEN;
                 case month_enum.SEP:
                     return color_rep_enum.GREEN;
                 case month_enum.OCT:
