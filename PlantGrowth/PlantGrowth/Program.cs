@@ -1,4 +1,5 @@
-﻿using System;
+﻿using KdTree;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -83,7 +84,7 @@ namespace PlantGrowth
             this.state = new_state;
         }
 
-        public float GetSunScaler(List<Plant> neighbors)
+        public float GetSunScaler()
         {
             foreach (var neighbor in neighors)
             {
@@ -94,7 +95,7 @@ namespace PlantGrowth
             }
         }
 		
-		public Changes simulate(List<Plant> simulation_plants) 
+		public Changes simulate() 
 		{
 			Changes changes = new Changes(this);
 			//change values of new_height, new_radius, new_state
@@ -242,24 +243,28 @@ namespace PlantGrowth
     class GrowthSimulation
     {
         private static int month;
-        private static List<Plant> simulation_plants; // TODO change to quad tree
+        public static List<KdTreeNode<float, Plant>> simulation_plants;
+        public static KdTree<float, Plant> plants_tree;
         private static Queue<Changes> changes_queue;
         static void MainFunction(List<float> xpositions, List<float> ypositions, List<int> plant_states, List<int> plant_type, int iterations, List<float> plant_heights, List<float> plant_radius, List<float> plant_output_state)
         {
-            for(int i=0; i<xpositions.Count; ++i)
+            KdTreeNode<float, Plant> tree_node;
+            for (int i=0; i<xpositions.Count; ++i)
             {
                 switch (plant_type[i])
                 {
                     case (int)plant_enum.BEAR:
-                        simulation_plants.Add(new BearGrass(xpositions[i], ypositions[i], plant_states[i]));
+                        tree_node = new KdTreeNode<float, Plant>(new float[] { xpositions[i], ypositions[i] }, new BearGrass(xpositions[i], ypositions[i], plant_states[i]));
                         break;
                     case (int)plant_enum.YUCCA:
-                        simulation_plants.Add(new Yucca(xpositions[i], ypositions[i], plant_states[i]));
+                        tree_node = new KdTreeNode<float, Plant>(new float[] { xpositions[i], ypositions[i] }, new Yucca(xpositions[i], ypositions[i], plant_states[i]));
                         break;
                     default:
-                        simulation_plants.Add(new LittleBluestem(xpositions[i], ypositions[i], plant_states[i]));
+                        tree_node = new KdTreeNode<float, Plant>(new float[] { xpositions[i], ypositions[i] }, new LittleBluestem(xpositions[i], ypositions[i], plant_states[i]));
                         break;
                 }
+                simulation_plants.Add(tree_node);
+                plants_tree.Add(tree_node.Point, tree_node.Value);
             }
 			
 			//maybe this loop should go in grasshopper script, so C# script is run multiple times giving new output every time?
@@ -275,9 +280,9 @@ namespace PlantGrowth
 
         private static void GenerateChanges()
         {
-            foreach (var plant in simulation_plants)
+            foreach (var plant_node in simulation_plants)
             {
-                changes_queue.Enqueue(plant.simulate(simulation_plants));
+                changes_queue.Enqueue(plant_node.Value.simulate());
             }
         }
 
