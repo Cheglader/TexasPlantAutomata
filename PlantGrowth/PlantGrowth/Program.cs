@@ -302,7 +302,7 @@ namespace PlantGrowth
 
         public static int get_month()
         {
-            return month;
+            return (int)GrowthSimulation.month;
         }
     }
     // Args: Iterations, x positions, y positions, states, 
