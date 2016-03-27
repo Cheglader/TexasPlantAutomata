@@ -52,6 +52,7 @@ namespace PlantGrowth
         public state_enum state;
         protected const float min_radius = 99999;
         protected const sun_enum sun_requirements = sun_enum.FULL;
+        public const int MaxNeighbors = 10;
 
         public Plant(float x, float y, int state)
         {
@@ -84,15 +85,32 @@ namespace PlantGrowth
             this.state = new_state;
         }
 
+        public float ShadowLength()
+        {
+            // TODO Implement
+            return 0;
+        }
+
+        public float DistanceSquared(Plant neighbor)
+        {
+            return (float)(Math.Pow(x - neighbor.x, 2) + Math.Pow(y - neighbor.y, 2));
+        }
+
         public float GetSunScaler()
         {
-            foreach (var neighbor in neighors)
+            var neighbors = GrowthSimulation.plants_tree.RadialSearch(new float[] { this.x, this.y }, this.MaxOverlap, Plant.MaxNeighbors);
+            float shadow_percentage = 0;
+            foreach (var neighbor in neighbors)
             {
-                if(neighbor != this && Distance(neighbor, self) < neighbor.MaxShadowDistance)
+                var shadow_length = neighbor.Value.ShadowLength();
+                var distance_squared = this.DistanceSquared(neighbor.Value);
+                if (neighbor.Value != this && distance_squared < (shadow_length * shadow_length))
                 {
-                    // TODO distance formula, MaxShadowDistance pseudo-constant
+                    shadow_percentage += (float)Math.Sqrt(distance_squared);
                 }
             }
+            shadow_percentage = Math.Min(shadow_percentage, 1);
+            return shadow_percentage / 1;
         }
 		
 		public Changes simulate() 
