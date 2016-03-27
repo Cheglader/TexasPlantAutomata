@@ -53,6 +53,8 @@ namespace PlantGrowth
         protected const float min_radius = 99999;
         protected const sun_enum sun_requirements = sun_enum.FULL;
         public const int MaxNeighbors = 10;
+        public static float AverageAustinSunAngleFactor = (float)Math.Atan(25.9);
+        public const float MaxSunOverlap = 88; // Inches of max shadow based on beargrass (largest plant)
 
         public Plant(float x, float y, int state)
         {
@@ -65,8 +67,12 @@ namespace PlantGrowth
 
         //getters
 
-        //may vary per plant type
         public abstract color_rep_enum get_color_rep(month_enum month);
+
+        public virtual float SunRequirementsPercentage()
+        {
+            return 33; // Partial and Full Sun
+        }
 
         public float get_height()
         {
@@ -87,8 +93,7 @@ namespace PlantGrowth
 
         public float ShadowLength()
         {
-            // TODO Implement
-            return 0;
+            return width_radius + (height * Plant.AverageAustinSunAngleFactor);
         }
 
         public float DistanceSquared(Plant neighbor)
@@ -98,7 +103,7 @@ namespace PlantGrowth
 
         public float GetSunScaler()
                 {
-            var neighbors = GrowthSimulation.plants_tree.RadialSearch(new float[] { this.x, this.y }, this.MaxOverlap, Plant.MaxNeighbors);
+            var neighbors = GrowthSimulation.plants_tree.RadialSearch(new float[] { this.x, this.y }, Plant.MaxSunOverlap, Plant.MaxNeighbors);
             float shadow_percentage = 0;
             foreach (var neighbor in neighbors)
             {
@@ -109,8 +114,12 @@ namespace PlantGrowth
                     shadow_percentage += (float)Math.Sqrt(distance_squared);
                 }
             }
-            shadow_percentage = Math.Min(shadow_percentage, 1);
-            return shadow_percentage / 1;
+            shadow_percentage = Math.Min(shadow_percentage, 1) / width_radius;
+            if(shadow_percentage < this.SunRequirementsPercentage())
+            {
+                return -1; // Magic Value -1 means plant died
+            }
+            return (float)((0.217147241) * Math.Log(shadow_percentage+1)); // http://www.solarpaneltilt.com/
         }
 		
 		public Changes simulate() 
@@ -129,7 +138,7 @@ namespace PlantGrowth
         {
         }
 		
-		public color_rep_enum get_color_rep(month_enum month)
+		public override color_rep_enum get_color_rep(month_enum month)
         {
             switch (month)
             {
@@ -160,6 +169,11 @@ namespace PlantGrowth
             }
             return color_rep_enum.WINTER;
         }
+
+        public override float SunRequirementsPercentage()
+        {
+            return 66; // Full Sun Only
+        }
     }
 
     class LittleBluestem : Plant
@@ -168,7 +182,7 @@ namespace PlantGrowth
         {
         }
 		
-		public color_rep_enum get_color_rep(month_enum month)
+		public override color_rep_enum get_color_rep(month_enum month)
         {
             switch (month)
             {
@@ -207,7 +221,7 @@ namespace PlantGrowth
         {
         }
 		
-		public color_rep_enum get_color_rep(month_enum month)
+		public override color_rep_enum get_color_rep(month_enum month)
         {
             switch (month)
             {
