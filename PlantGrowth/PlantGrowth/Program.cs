@@ -61,8 +61,16 @@ namespace PlantGrowth
             this.x = x;
             this.y = y;
             this.state = (state_enum)state;
-            this.width_radius = 0;
-            this.height = 0;
+            if (state == (int)state_enum.SEED)
+            {
+                this.width_radius = 0;
+                this.height = 0;
+            }
+            else
+            {
+                this.height = 4.33f;
+                this.width_radius = 4;
+            }
         }
 
         //getters
@@ -121,11 +129,13 @@ namespace PlantGrowth
             }
             return (float)((0.217147241) * Math.Log(shadow_percentage+1)); // http://www.solarpaneltilt.com/
         }
-		
+
+        public abstract float GetGrowth();
+
 		public Changes simulate() 
 		{
 			Changes changes = new Changes(this);
-			//change values of new_height, new_radius, new_state
+			// TODO change values of new_height, new_radius, new_state
 			
 			
 			return changes;
@@ -134,6 +144,7 @@ namespace PlantGrowth
 
     class BearGrass : Plant
     {
+        public static float minimum_radius = 18;
         public BearGrass(float x, float y, int state) : base(x, y, state)
         {
         }
@@ -174,10 +185,16 @@ namespace PlantGrowth
         {
             return 66; // Full Sun Only
         }
+
+        public override float GetGrowth()
+        {
+            return 4.365827924 * Math.Log() - 2.901722353;
+        }
     }
 
     class LittleBluestem : Plant
     {
+        public static float minimum_radius = 4;
         public LittleBluestem(float x, float y, int state) : base(x, y, state)
         {
         }
@@ -213,10 +230,16 @@ namespace PlantGrowth
             }
             return color_rep_enum.WINTER;
         }
+
+        public override float GetGrowth()
+        {
+            throw new NotImplementedException();
+        }
     }
 
     class Yucca : Plant
     {
+        public static float minimum_radius = 4;
         public Yucca(float x, float y, int state) : base(x, y, state)
         {
         }
@@ -251,6 +274,11 @@ namespace PlantGrowth
                     return color_rep_enum.WINTER;
             }
             return color_rep_enum.WINTER;
+        }
+
+        public override float GetGrowth()
+        {
+            throw new NotImplementedException();
         }
     }
     class Changes
