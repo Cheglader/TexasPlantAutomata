@@ -231,9 +231,9 @@ public class Script_Instance : GH_ScriptInstance
       return width_radius + (height * Plant.AverageAustinSunAngleFactor);
     }
 
-    public float DistanceSquared(Plant neighbor)
+    public double DistanceSquared(Plant neighbor)
     {
-      return (float) (Math.Pow(x - neighbor.x, 2) + Math.Pow(y - neighbor.y, 2));
+      return Math.Max((Math.Pow(neighbor.x - x, 2) + Math.Pow(neighbor.y - y, 2)), 0);
     }
 
     public float GetSunScaler()
@@ -242,10 +242,14 @@ public class Script_Instance : GH_ScriptInstance
       float shadow_percentage = 0;
       foreach (var neighbor in neighbors)
       {
-        var r = neighbor.Value.ShadowLength(); // Shadow Length
-        var R = width_radius;
-        var distance_squared = this.DistanceSquared(neighbor.Value);
-        var d = (float) Math.Sqrt(distance_squared);
+        if (neighbor.Value == this) continue;
+        float r = neighbor.Value.ShadowLength(); // Shadow Length
+        float R = width_radius;
+        double distance_squared = this.DistanceSquared(neighbor.Value);
+        double d = Math.Sqrt(distance_squared);
+        if (distance_squared < this.MinSize()){
+          return -1;
+        }
         if(R < r){
           R = r;
           r = width_radius;
@@ -256,16 +260,13 @@ public class Script_Instance : GH_ScriptInstance
 
         float intersectionArea = part1 + part2 - part3;
 
-        if (d < this.MinSize()) {
-          return -1;
-        }
         if (neighbor.Value != this && d < r)
         {
           shadow_percentage += intersectionArea / this.BaseArea();
         }
       }
-      shadow_percentage = (float) (1 - (Math.Min(shadow_percentage, width_radius) / width_radius));
-      if(shadow_percentage < this.SunRequirementsPercentage())
+      shadow_percentage = (float) (1 - Math.Min(shadow_percentage, 1) / 1);
+      if(shadow_percentage * 100 < this.SunRequirementsPercentage())
       {
         return -1; // Magic Value -1 means plant died
       }
@@ -284,12 +285,12 @@ public class Script_Instance : GH_ScriptInstance
       Changes changes;
       ++this.age;
       var total_growth = this.GetGrowth();
-      //if (total_growth < 0) {
-      //  changes = new Changes(this, 0, 0, state_enum.DEAD);
-      //} else
-      //{
-      changes = new Changes(this, Math.Min(total_growth * (1 - this.HToWRatio()), this.MaxHeight()), Math.Min(total_growth * this.HToWRatio(), this.MaxWidth()), state_enum.ALIVE);
-      //}
+      if (total_growth < 0) {
+        changes = new Changes(this, 0, 0, state_enum.DEAD);
+      } else
+      {
+        changes = new Changes(this, Math.Min(total_growth * (1 - this.HToWRatio()), this.MaxHeight()), Math.Min(total_growth * this.HToWRatio(), this.MaxWidth()), state_enum.ALIVE);
+      }
       return changes;
     }
   }
@@ -364,7 +365,7 @@ public class Script_Instance : GH_ScriptInstance
     public override float GetGrowth()
     {
       float sun_scaler = this.GetSunScaler();
-      //if(sun_scaler < 0) return -1;
+      if(sun_scaler < 0) return -1;
       return (float) (Math.Max((4.365827924 * Math.Log(age * 4 + 4) - 6.901722353), 0) * sun_scaler);
     }
 
@@ -438,8 +439,8 @@ public class Script_Instance : GH_ScriptInstance
     public override float GetGrowth()
     {
       float sun_scaler = this.GetSunScaler();
-      // if(sun_scaler < 0) return -1;
-      return (float) ((4.365827924 * Math.Log(age * 4 + 4) - 2.901722353) * sun_scaler);
+      if(sun_scaler < 0) return -1;
+      return (float) ((8.336309999 * Math.Log(age * 4 + 4) - 11.55657954) * sun_scaler);
     }
 
     public override float MinSize()
@@ -512,7 +513,7 @@ public class Script_Instance : GH_ScriptInstance
     {
       float sun_scaler = this.GetSunScaler();
       // if(sun_scaler < 0) return -1;
-      return (float) ((4.365827924 * Math.Log(age * 4 + 4) - 2.901722353) * sun_scaler);
+      return (float) ((5.683847725 * Math.Log(age * 4 + 4) - 7.879486051) * sun_scaler);
     }
 
     public override float MinSize()
